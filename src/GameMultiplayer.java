@@ -6,6 +6,7 @@
 public class GameMultiplayer extends Game {
 
 	GameMultiplayer() {
+		super();
 		System.out.println("Creating Multiplayer Game");
 	}
 }

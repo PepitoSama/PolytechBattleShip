@@ -13,11 +13,13 @@ public class Board {
 	private ArrayList<BattleShip> ships = new ArrayList<BattleShip>();
 	private ArrayList<String> shots = new ArrayList<String>();
 	boolean alive = true;
-	int playerNbr;
+	private int playerNbr, size;
 
-	Board(int playerNbr) {
+	Board(int playerNbr, int size) {
 		setPlayerNbr(playerNbr);
 		setAlive(true);
+		setSize(size);
+
 		System.out.println("Creating player " + getPlayerNbr() + " board");
 		int i = 0;
 
@@ -54,6 +56,15 @@ public class Board {
 
 	}
 
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	// First showBoard version, can't take a != 10 size frid
 	public void showBoard() {
 		System.out.println("| [\tYour ships\t]\t| [\tYour shots\t]");
 		System.out.println("| [\tABCDEFGHIJ\t]\t| [\tABCDEFGHIJ\t]");
@@ -62,7 +73,7 @@ public class Board {
 			for (int j = 0; j < 10; j++) {
 				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
 				if (!isValid(testCell)) {
-					System.out.print("x");
+					System.out.print("o");
 				} else {
 					System.out.print("~");
 				}
@@ -84,36 +95,47 @@ public class Board {
 
 	public void showBoard2() {
 		ArrayList<String> usedCells = getUsed();
-		
 
-		System.out.println("| [|\tYour ships\t|]\t| [|\tYour shots\t|]");
-		System.out.println("| [|\tA-B-C-D-E-F-G-H-I-J\t|]\t| [|\tA-B-C-D-E-F-G-H-I-J\t|]");
+		System.out.println("/\t[ Your ships\t\t]|\t[ Your shots\t\t]");
+		System.out.println("|\t[ A-B-C-D-E-F-G-H-I-J\t]|\t[ A-B-C-D-E-F-G-H-I-J\t]");
 		// System.out.println(generatedaxis);
 		// TODO
-		
-		for (int i = 0; i < 10; i++) {
-			System.out.print(i + " [\t");
-			for (int j = 0; j < 10; j++) {
+
+		for (int i = 1; i < getSize() + 1; i++) {
+			System.out.print((i) + "\t[ ");
+			for (int j = 0; j < getSize(); j++) {
 				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
 				if (usedCells.indexOf(testCell) >= 0) {
-					System.out.print("x");
+					System.out.print("o");
 				} else {
 					System.out.print("~");
 				}
+				System.out.print(" ");
 			}
-			System.out.print("\t]\t" + i + " [\t");
-			for (int j = 0; j < 10; j++) {
+			System.out.print("\t] " + i + "\t[");
+			for (int j = 0; j < getSize(); j++) {
 				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
 				if (isShot(testCell)) {
 					System.out.print("o");
 				} else {
 					System.out.print("~");
 				}
+				System.out.print(" ");
 			}
 			System.out.println("\t]");
 
 		}
-		System.out.println("| [|\t__________\t|]\t| [|\t__________\t|]");
+
+		System.out.print("\\\t[ ");
+		for (int i = 0; i < size; i++) {
+			System.out.print("__");
+		}
+		System.out.print("\t] |\t[ ");
+
+		for (int i = 0; i < size; i++) {
+			System.out.print("__");
+		}
+		System.out.println("\t]");
 	}
 
 	// shoot function will tell all ships
@@ -126,7 +148,8 @@ public class Board {
 		for (BattleShip ship : getShips()) {
 			// Test if on that ship, there is shooted cell
 			result = ship.EnnemyFire(shootCell);
-			// If one ship have that cell, and have no cell left, "kill" will be return
+			// If one ship have that cell, and have no cell left, "kill" will be
+			// return
 			if (result == "kill") {
 				getShips().remove(ship);
 				System.out.println(getShips().size() + " ship left for player " + getPlayerNbr());
@@ -216,24 +239,38 @@ public class Board {
 	}
 
 	private int lenCalc(String startCell, String endCell) {
-		char xStart = startCell.charAt(0);
-		char xEnd = endCell.charAt(0);
-		int yStart = Character.getNumericValue(startCell.charAt(1));
-		int yEnd = Character.getNumericValue(endCell.charAt(1));
+		char xStart = startCell.charAt(0);;
+		int yStart = Character.getNumericValue(startCell.charAt(1));;
+		char xEnd = endCell.charAt(0);;
+		int yEnd = Character.getNumericValue(endCell.charAt(1));;
+		String tmp = " ";
+		
+		if (startCell.length() == 3) {
+			tmp = Character.toString(startCell.charAt(1)) + Character.toString(startCell.charAt(2));
+			yStart = Integer.parseInt(tmp);
+		}
+
+		if (endCell.length() == 3) {
+			tmp = Character.toString(endCell.charAt(1)) + Character.toString(endCell.charAt(2));
+			yEnd = Integer.parseInt(tmp);
+		}
 
 		int len = 0;
 		if (xStart != xEnd && yStart != yEnd) {
-			// System.out.println("Maybe placing your point on same X or Y would help ");
+			// System.out.println("Maybe placing your point on same X or Y would
+			// help ");
 			len = -1;
 		} else if (xStart == xEnd && yStart == yEnd) {
 			// System.out.println("DEBUG(lenCalc) : Len Calculed : " + 1);
 			len = 0;
 		} else if (xStart == xEnd) {
-			// System.out.println("DEBUG(lenCalc) : Len Calculed : " + ((yEnd - yStart) +
+			// System.out.println("DEBUG(lenCalc) : Len Calculed : " + ((yEnd -
+			// yStart) +
 			// 1));
 			return ((yEnd - yStart) + 1);
 		} else if (yStart == yEnd) {
-			// System.out.println("DEBUG(lenCalc) : Len Calculed : " + ((xEnd - xStart) +
+			// System.out.println("DEBUG(lenCalc) : Len Calculed : " + ((xEnd -
+			// xStart) +
 			// 1));
 			return ((xEnd - xStart) + 1);
 		}
@@ -268,24 +305,25 @@ public class Board {
 
 	private boolean isShot(String testCell) {
 		boolean result = false;
-		if (getShots().indexOf(testCell) >= 0) { // If there is one cell which have same location
+		if (getShots().indexOf(testCell) >= 0) { // If there is one cell which
+													// have same location
 			result = true;
 		}
 		return result;
 	}
 
-	public ArrayList<String> getUsable(){
+	public ArrayList<String> getUsable() {
 		ArrayList<String> usableCells = new ArrayList<String>();
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; j++) {
+		for (int i = 1; i < getSize() + 1; i++) {
+			for (int j = 0; j < getSize(); j++) {
 				String usableCell = Character.toString((char) (65 + j)) + String.valueOf((i));
 				usableCells.add(usableCell);
 			}
 		}
 		return usableCells;
 	}
-	
-	private ArrayList<String> getUsed(){
+
+	private ArrayList<String> getUsed() {
 		ArrayList<String> usedCells = new ArrayList<String>();
 		for (BattleShip ship : getShips()) {
 			for (String cell : ship.getCells()) {
