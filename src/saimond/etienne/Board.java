@@ -1,3 +1,4 @@
+package saimond.etienne;
 
 /*
  * Polytech BattleShip v1
@@ -12,6 +13,8 @@ public class Board {
 	private int shipLengths[] = { 5, 4, 3, 3, 2 };
 	private ArrayList<BattleShip> ships = new ArrayList<BattleShip>();
 	private ArrayList<String> shots = new ArrayList<String>();
+	private ArrayList<String> took = new ArrayList<String>();
+
 	boolean alive = true;
 	private int playerNbr, size;
 
@@ -27,25 +30,28 @@ public class Board {
 		String endCell = "";
 
 		while (i < getShipLenghts().length) {
-			System.out.println("Enter position for a " + getShipLenghts()[i] + " cases ship.");
+			System.out.println("Enter position for a " + getShipLenghts()[i]
+					+ " cases ship.");
 			System.out.println("Enter Your starting Position (A-J 0-9)");
 			startCell = this.askForPosition();
 			System.out.println("Enter Your ending Position (A-J 0-9)");
 			endCell = this.askForPosition();
-
-			if ((endCell.charAt(0) < startCell.charAt(0)) || (Character.getNumericValue(endCell.charAt(1)) < Character
-					.getNumericValue(startCell.charAt(1)))) {
+			
+			if ((endCell.charAt(0) < startCell.charAt(0)) || (Character.getNumericValue(endCell.charAt(1)) < Character.getNumericValue(startCell.charAt(1)))) {
 				String switchString = endCell;
 				endCell = startCell;
 				startCell = switchString;
 
 			}
+			// TODO Find a way to invert
+
 			int len = lenCalc(startCell, endCell);
 			if (getShipLenghts()[i] == len) {
 				if (createBoat(startCell, endCell, len, i)) {
 					i++;
 				} else {
-					System.out.println("\t/!\\ Error : A ship already use one cell");
+					System.out
+							.println("\t/!\\ Error : A ship already use one cell");
 					System.out.println("\t/!\\ Enter your positions again\n");
 				}
 			} else {
@@ -63,15 +69,16 @@ public class Board {
 	public void setSize(int size) {
 		this.size = size;
 	}
-
-	// First showBoard version, can't take a != 10 size frid
+	/*
+	// First showBoard version, can't take a != 10 size grid
 	public void showBoard() {
 		System.out.println("| [\tYour ships\t]\t| [\tYour shots\t]");
 		System.out.println("| [\tABCDEFGHIJ\t]\t| [\tABCDEFGHIJ\t]");
 		for (int i = 0; i < 10; i++) {
 			System.out.print(i + " [\t");
 			for (int j = 0; j < 10; j++) {
-				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
+				String testCell = Character.toString((char) (65 + j))
+						+ String.valueOf((i));
 				if (!isValid(testCell)) {
 					System.out.print("o");
 				} else {
@@ -80,7 +87,8 @@ public class Board {
 			}
 			System.out.print("\t]\t" + i + " [\t");
 			for (int j = 0; j < 10; j++) {
-				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
+				String testCell = Character.toString((char) (65 + j))
+						+ String.valueOf((i));
 				if (isShot(testCell)) {
 					System.out.print("o");
 				} else {
@@ -92,31 +100,38 @@ public class Board {
 		}
 		System.out.println("| [\t__________\t]\t| [\t__________\t]");
 	}
+	*/
 
+	// Version 2 of showBoard function. 5ms more efficient.
 	public void showBoard2() {
 		ArrayList<String> usedCells = getUsed();
 
-		System.out.println("/\t[ Your ships\t\t]|\t[ Your shots\t\t]");
-		System.out.println("|\t[ A-B-C-D-E-F-G-H-I-J\t]|\t[ A-B-C-D-E-F-G-H-I-J\t]");
+		System.out.println("/\t[ Your ships\t\t] |\t[ Your shots\t\t]");
+		System.out
+				.println("|\t[ A-B-C-D-E-F-G-H-I-J\t] |\t[ A-B-C-D-E-F-G-H-I-J\t]");
 		// System.out.println(generatedaxis);
 		// TODO
 
 		for (int i = 1; i < getSize() + 1; i++) {
 			System.out.print((i) + "\t[ ");
 			for (int j = 0; j < getSize(); j++) {
-				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
+				String testCell = Character.toString((char) (65 + j))
+						+ String.valueOf((i));
 				if (usedCells.indexOf(testCell) >= 0) {
 					System.out.print("o");
+				} else if (took.indexOf(testCell) >= 0) {
+					System.out.print("x");
 				} else {
 					System.out.print("~");
 				}
 				System.out.print(" ");
 			}
-			System.out.print("\t] " + i + "\t[");
+			System.out.print("\t] " + i + "\t[ ");
 			for (int j = 0; j < getSize(); j++) {
-				String testCell = Character.toString((char) (65 + j)) + String.valueOf((i));
+				String testCell = Character.toString((char) (65 + j))
+						+ String.valueOf((i));
 				if (isShot(testCell)) {
-					System.out.print("o");
+					System.out.print("x");
 				} else {
 					System.out.print("~");
 				}
@@ -142,6 +157,9 @@ public class Board {
 	// that a cell have been shot
 	public String shoot(String shootCell) {
 
+		// First of all, we got to save that this cell has been shot
+
+		took.add(shootCell);
 		String result = "miss";
 
 		// This for loop will get all ships one by one
@@ -152,7 +170,8 @@ public class Board {
 			// return
 			if (result == "kill") {
 				getShips().remove(ship);
-				System.out.println(getShips().size() + " ship left for player " + getPlayerNbr());
+				System.out.println(getShips().size() + " ship left for player "
+						+ getPlayerNbr());
 				if (getShips().size() == 0) {
 					setAlive(false);
 				}
@@ -239,19 +258,25 @@ public class Board {
 	}
 
 	private int lenCalc(String startCell, String endCell) {
-		char xStart = startCell.charAt(0);;
-		int yStart = Character.getNumericValue(startCell.charAt(1));;
-		char xEnd = endCell.charAt(0);;
-		int yEnd = Character.getNumericValue(endCell.charAt(1));;
+		char xStart = startCell.charAt(0);
+
+		int yStart = Character.getNumericValue(startCell.charAt(1));
+
+		char xEnd = endCell.charAt(0);
+
+		int yEnd = Character.getNumericValue(endCell.charAt(1));
+
 		String tmp = " ";
-		
+
 		if (startCell.length() == 3) {
-			tmp = Character.toString(startCell.charAt(1)) + Character.toString(startCell.charAt(2));
+			tmp = Character.toString(startCell.charAt(1))
+					+ Character.toString(startCell.charAt(2));
 			yStart = Integer.parseInt(tmp);
 		}
 
 		if (endCell.length() == 3) {
-			tmp = Character.toString(endCell.charAt(1)) + Character.toString(endCell.charAt(2));
+			tmp = Character.toString(endCell.charAt(1))
+					+ Character.toString(endCell.charAt(2));
 			yEnd = Integer.parseInt(tmp);
 		}
 
@@ -279,9 +304,26 @@ public class Board {
 
 	private ArrayList<String> getArray(String startCell, String endCell, int len) {
 		char xStart = startCell.charAt(0);
-		char xEnd = endCell.charAt(0);
+		;
 		int yStart = Character.getNumericValue(startCell.charAt(1));
+		;
+		char xEnd = endCell.charAt(0);
+		;
 		int yEnd = Character.getNumericValue(endCell.charAt(1));
+		;
+		String tmp = " ";
+
+		if (startCell.length() == 3) {
+			tmp = Character.toString(startCell.charAt(1))
+					+ Character.toString(startCell.charAt(2));
+			yStart = Integer.parseInt(tmp);
+		}
+
+		if (endCell.length() == 3) {
+			tmp = Character.toString(endCell.charAt(1))
+					+ Character.toString(endCell.charAt(2));
+			yEnd = Integer.parseInt(tmp);
+		}
 
 		ArrayList<String> array = new ArrayList<String>();
 		// System.out.print("DEBUG(getArray) : Generating array ");
@@ -316,7 +358,8 @@ public class Board {
 		ArrayList<String> usableCells = new ArrayList<String>();
 		for (int i = 1; i < getSize() + 1; i++) {
 			for (int j = 0; j < getSize(); j++) {
-				String usableCell = Character.toString((char) (65 + j)) + String.valueOf((i));
+				String usableCell = Character.toString((char) (65 + j))
+						+ String.valueOf((i));
 				usableCells.add(usableCell);
 			}
 		}

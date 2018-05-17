@@ -1,3 +1,5 @@
+package saimond.etienne;
+
 /*
  * Polytech BattleShip v1
  * GameSolo class

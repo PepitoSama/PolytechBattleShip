@@ -1,3 +1,4 @@
+package saimond.etienne;
 
 /*
  * Polytech BattleShip v0.9

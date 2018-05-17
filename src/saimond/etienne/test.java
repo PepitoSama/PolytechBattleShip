@@ -1,23 +1,6 @@
-/*
- * Polytech BattleShip v1
- * Main class
- */
+package saimond.etienne;
 
-import java.util.Scanner;
-
-public class Game {
-
-	Scanner sc = new Scanner(System.in);
-	private Board activeBoard;
-	private Board passiveBoard;
-
-	Game(int size) {
-		// when a new game is created, 2 Board are created for each player
-		setActiveBoard(new Board(1, size)); 	// A Board only take player number in
-										// arguments
-		setPassiveBoard(new Board(2, size));
-	}
-
+public class test {
 	public static void main(String[] args) throws InterruptedException {
 
 		// Sober welcome message for sober people
@@ -61,41 +44,10 @@ public class Game {
 			newGame.clearThat();
 			System.out.println("Switching Board, cover your eyes !");
 			// let 4s to the other player to take place
-			Thread.sleep(4000);
+			Thread.sleep(1000);
 		}
 		// The last player who played won
 		// I just used switchBoard() function so this is Passive ones
 		System.out.println("Player " + newGame.getPassiveBoard().getPlayerNbr() + " Win. Bravo (☞ﾟヮﾟ)☞");
 	}
-
-	public void clearThat() {
-		for (int i = 0; i < 50; i++) {
-			System.out.println("");
-		}
-		System.out.println("_____________________________________");
-	}
-
-	public Board getActiveBoard() {
-		return this.activeBoard;
-	}
-
-	public void setActiveBoard(Board board) {
-		this.activeBoard = board;
-	}
-
-	public Board getPassiveBoard() {
-		return this.passiveBoard;
-	}
-
-	public void setPassiveBoard(Board board) {
-		this.passiveBoard = board;
-	}
-
-	private void switchBoard() {
-		Board switchBoard = this.getActiveBoard();
-		this.setActiveBoard(this.getPassiveBoard());
-		this.setPassiveBoard(switchBoard);
-	}
-
-	// This function will ask user for a valid position
 }
