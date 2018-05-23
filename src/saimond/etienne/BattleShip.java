@@ -19,10 +19,7 @@ public class BattleShip {
 			addCell(cell);
 		}
 
-		// System.out.print("DEBUG(BattleShip) : Generating cells "+
-		// getCells());
-
-		System.out.println("\nBattleShip created");
+		System.out.println("\nBattleShip created\n");
 
 	}
 
