@@ -45,32 +45,27 @@ public class Menu {
 			int winner[] = {0,0};
 			int victory[] = {0,0};
 			
-			for (int i=1; i<3;i++) {
+			for (int i=1; i<=3;i++) {
 				for (int j=1; j<=100;j++) {
-					newGame = null;
-					newGame = new Game(size, (type[2]), i);
-					while ((result = newGame.play()) == 0) {
+					newGame = new Game(size, type[str - 1], i);
+					
+					result = newGame.play();
+					while (result == 0) {
+						result = newGame.play();
 					}
+					System.out.println("Player " + result + " Win.");
 					winner[result-1]++;
+					System.out.println("Player " + result + " Win.");
+					System.out.println("Player 1 : " + winner[0] + " Player 2 : " + winner[1]);
+					result = 0;
 				}
-				
-				if(winner[0] > winner[1]) {
-					victory[0]++;
-				} else {
-					victory[1]++;
-				}
-				
-				winner[0] = 0;
-				winner[1] = 0;
-				result = 0;
-				
 			}
 			System.out.println("1 :" + victory[0] + "2 :" + victory[1]);
 		} else {
 			char playAgain = 'y';
 			
 			while (playAgain == 'y') {
-				newGame = new Game(size, (type[str - 1]), diff);
+				newGame = new Game(size, type[str - 1], diff);
 				while ((result = newGame.play()) == 0) {
 					//if (newGame.getType() == "Human-Human")
 						//Thread.sleep(1000);

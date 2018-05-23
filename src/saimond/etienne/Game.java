@@ -1,10 +1,5 @@
 package saimond.etienne;
 
-/*
- * Polytech BattleShip v1
- * Main class
- */
-
 import java.util.Scanner;
 
 public class Game {
@@ -36,6 +31,7 @@ public class Game {
 		}
 
 		else if (type == "AI-AI") {
+			System.out.println("Creating AI-AI");
 			if (diff == 1) {
 				setActiveBoard(new BoardAIEasy(1, size));
 				setPassiveBoard(new BoardAIMedium(2, size));
@@ -54,9 +50,9 @@ public class Game {
 		String result = "miss";
 		// This string will get the cell players want to attack
 		String cell;
-		// The exit condition is : Two players must be alive
 
 		System.out.println("Player " + getActiveBoard().getPlayerNbr() + " turn");
+
 		if (getActiveBoard().getType() == "Human") {
 			((BoardHuman) getActiveBoard()).showBoard();
 			System.out.println("Which cell do you want to attack ? (A-J 0-9)");
@@ -68,15 +64,11 @@ public class Game {
 		} else if (getActiveBoard().getType() == "AI") {
 
 			cell = getActiveBoard().askForRandomPosition();
-			// If Medium AI is choose
-			if (((BoardAI) getActiveBoard()).getDiff() == 2) {
-				while (getActiveBoard().getShots().indexOf(cell) >= 0) {
-					cell = getActiveBoard().askForRandomPosition();
-					result = getPassiveBoard().shoot(cell);
-				}
-			}
+			result = getPassiveBoard().shoot(cell);
+		
 			// If Hard AI is choose
-			else if (((BoardAI) getActiveBoard()).getDiff() == 3) {
+			if (((BoardAI) getActiveBoard()).getDiff() == 3) {
+				cell = getActiveBoard().askForRandomPosition();
 				if (((BoardAIHard) getActiveBoard()).getFirstHit() == null) {
 					while (getActiveBoard().getShots().indexOf(cell) >= 0) {
 						cell = getActiveBoard().askForRandomPosition();
@@ -85,6 +77,9 @@ public class Game {
 					if (result == "hit") {
 						System.out.println("First hit !!");
 						((BoardAIHard) getActiveBoard()).reset(cell);
+					} else if (result == "kill") {
+						System.out.println("Ship destroyed : ");
+						((BoardAIHard) getActiveBoard()).reset(null);
 					}
 				} else {
 					System.out.print("Cell registered : ");
@@ -106,21 +101,35 @@ public class Game {
 					}
 				}
 			}
-			// Else AI is easy
-			else {
+			// If Medium or Hard AI is chosen
+			else if (((BoardAI) getActiveBoard()).getDiff() == 2) {
+				while (getActiveBoard().getShots().indexOf(cell) >= 0) {
+					cell = getActiveBoard().askForRandomPosition();
+				}
 				result = getPassiveBoard().shoot(cell);
 			}
-
-			System.out.println("AI shoot : " + cell + ", " + result);
+			// Else AI is easy
+			else if (((BoardAI) getActiveBoard()).getDiff() == 1) {
+				cell = getActiveBoard().askForRandomPosition();
+				result = getPassiveBoard().shoot(cell);
+			}
+			
 			getActiveBoard().addShot(cell);
+			
+			System.out.println("AI " + getActiveBoard().getPlayerNbr() + " shoot : " + cell + " , " + result);
 		}
 
-		if (!getPassiveBoard().isAlive()) {
+		if (end()) {
 			return getActiveBoard().getPlayerNbr();
 		} else {
 			switchBoard();
 			return 0;
 		}
+
+	}
+
+	private boolean end() {
+		return !getPassiveBoard().isAlive();
 	}
 
 	private String newCell(String cell, String nextShot) {

@@ -1,10 +1,5 @@
 package saimond.etienne;
 
-/*
- * Polytech BattleShip v0.9
- * Battleship class
- */
-
 import java.util.ArrayList;
 
 public class BattleShip {

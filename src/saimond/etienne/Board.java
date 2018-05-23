@@ -1,19 +1,14 @@
 package saimond.etienne;
 
-/*
- * Polytech BattleShip v1
- * Board class
- */
-
 import java.util.*;
 
 public class Board {
 
 	Scanner sc = new Scanner(System.in);
 	protected int shipLengths[] = { 5, 4, 3, 3, 2 };
-	protected ArrayList<BattleShip> ships = new ArrayList<BattleShip>();
-	protected ArrayList<String> shots = new ArrayList<String>();
-	protected ArrayList<String> took = new ArrayList<String>();
+	protected ArrayList<BattleShip> ships;
+	protected ArrayList<String> shots;
+	protected ArrayList<String> took;
 
 	boolean alive = true;
 	protected int playerNbr;
@@ -25,6 +20,10 @@ public class Board {
 		setAlive(true);
 		setSize(size);
 
+		ships = new ArrayList<BattleShip>();
+		shots = new ArrayList<String>();
+		took = new ArrayList<String>();
+		
 		System.out.println("Creating player " + getPlayerNbr() + " board");
 	}
 
