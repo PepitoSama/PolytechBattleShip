@@ -16,12 +16,15 @@ public class Game {
 
 	Game(int size, String type, int diff) {
 		setType(type);
+
 		// when a new game is created, 2 Board are created for each player
 		if (getType() == "Human-Human") {
 			// A Board need player number and grid size
 			setActiveBoard(new BoardHuman(1, size));
 			setPassiveBoard(new BoardHuman(2, size));
-		} else if (getType() == "Human-AI") {
+		}
+
+		else if (getType() == "Human-AI") {
 			setActiveBoard(new BoardHuman(1, size));
 			if (diff == 1) {
 				setPassiveBoard(new BoardAIEasy(2, size));
@@ -30,9 +33,19 @@ public class Game {
 			} else if (diff == 3) {
 				setPassiveBoard(new BoardAIHard(2, size));
 			}
-		} else if (type == "AI-AI") {
-			setActiveBoard(new BoardHuman(1, size));
-			setPassiveBoard(new BoardAI(2, size));
+		}
+
+		else if (type == "AI-AI") {
+			if (diff == 1) {
+				setActiveBoard(new BoardAIEasy(1, size));
+				setPassiveBoard(new BoardAIMedium(2, size));
+			} else if (diff == 2) {
+				setActiveBoard(new BoardAIMedium(1, size));
+				setPassiveBoard(new BoardAIHard(2, size));
+			} else if (diff == 3) {
+				setActiveBoard(new BoardAIEasy(1, size));
+				setPassiveBoard(new BoardAIHard(2, size));
+			}
 		}
 	}
 
@@ -50,26 +63,26 @@ public class Game {
 			cell = ((BoardHuman) getActiveBoard()).askForPosition();
 			System.out.println(getPassiveBoard().shoot(cell));
 			getActiveBoard().addShot(cell);
-			//clearThat();
+			// clearThat();
 			System.out.println("Switching Board, cover your eyes !");
 		} else if (getActiveBoard().getType() == "AI") {
-			
+
 			cell = getActiveBoard().askForRandomPosition();
 			// If Medium AI is choose
 			if (((BoardAI) getActiveBoard()).getDiff() == 2) {
-				while (getActiveBoard().getShots().indexOf(cell) >= 0){
+				while (getActiveBoard().getShots().indexOf(cell) >= 0) {
 					cell = getActiveBoard().askForRandomPosition();
 					result = getPassiveBoard().shoot(cell);
 				}
-			} 
+			}
 			// If Hard AI is choose
 			else if (((BoardAI) getActiveBoard()).getDiff() == 3) {
-				if (((BoardAIHard) getActiveBoard()).getFirstHit() == null){
-					while (getActiveBoard().getShots().indexOf(cell) >= 0){
+				if (((BoardAIHard) getActiveBoard()).getFirstHit() == null) {
+					while (getActiveBoard().getShots().indexOf(cell) >= 0) {
 						cell = getActiveBoard().askForRandomPosition();
 					}
 					result = getPassiveBoard().shoot(cell);
-					if (result == "hit"){
+					if (result == "hit") {
 						System.out.println("First hit !!");
 						((BoardAIHard) getActiveBoard()).reset(cell);
 					}
@@ -77,52 +90,54 @@ public class Game {
 					System.out.print("Cell registered : ");
 					String nextShot = ((BoardAIHard) getActiveBoard()).nextShot();
 					cell = ((BoardAIHard) getActiveBoard()).getLastHit();
-					cell = newCell(cell ,nextShot);
+					cell = newCell(cell, nextShot);
 					result = getPassiveBoard().shoot(cell);
-					if (result == "miss"){
+					if (result == "miss") {
 						System.out.println("removing cell : " + cell);
 						((BoardAIHard) getActiveBoard()).getDirections().remove(nextShot);
 						((BoardAIHard) getActiveBoard()).missShot();
+						// remettre case ?
 					} else if (result == "hit") {
 						((BoardAIHard) getActiveBoard()).remaining(nextShot);
+						((BoardAIHard) getActiveBoard()).setLastHit(cell);
 					} else if (result == "kill") {
-						System.out.println("killing ship : ");
-						((BoardAIHard) getActiveBoard()).setFirstHit(null);
-						((BoardAIHard) getActiveBoard()).setLastHit(null);
+						System.out.println("Ship destroyed : ");
+						((BoardAIHard) getActiveBoard()).reset(null);
 					}
 				}
-			} 
+			}
 			// Else AI is easy
 			else {
 				result = getPassiveBoard().shoot(cell);
 			}
-			
-			System.out.println("AI shoot : " + cell + ", "+ result);
+
+			System.out.println("AI shoot : " + cell + ", " + result);
 			getActiveBoard().addShot(cell);
 		}
-		
+
 		if (!getPassiveBoard().isAlive()) {
 			return getActiveBoard().getPlayerNbr();
 		} else {
+			switchBoard();
 			return 0;
 		}
 	}
 
 	private String newCell(String cell, String nextShot) {
-		
+
 		System.out.println("Choosing a new cell : " + nextShot);
 		System.out.println("Before : " + cell);
-		
+
 		char xAxis = cell.charAt(0);
 		int yAxis = Integer.parseInt(cell.substring(1));
-		
-		if (nextShot == "up" && yAxis > 1){
+
+		if (nextShot == "up" && yAxis > 1) {
 			yAxis--;
-		} else if (nextShot == "down" && yAxis < 10){
+		} else if (nextShot == "down" && yAxis < 10) {
 			yAxis++;
-		} else if (nextShot == "left" && xAxis > 64){
+		} else if (nextShot == "left" && xAxis > 64) {
 			xAxis--;
-		} else if (nextShot == "right" && xAxis < 75){
+		} else if (nextShot == "right" && xAxis < 75) {
 			xAxis++;
 		}
 		cell = Character.toString(xAxis) + Integer.toString(yAxis);

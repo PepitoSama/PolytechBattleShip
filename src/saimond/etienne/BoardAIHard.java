@@ -18,7 +18,7 @@ public class BoardAIHard extends BoardAI {
 	}
 
 	public void reset(String hit) {
-		this.directions.clear();
+		getDirections().clear();
 		setFirstHit(hit);
 		setLastHit(hit);
 		getDirections().add("up");
@@ -55,7 +55,7 @@ public class BoardAIHard extends BoardAI {
 		if ((direction == "up") || (direction == "down")) {
 			getDirections().remove("right");
 			getDirections().remove("left");
-		} else {
+		} else if ((direction == "right") || (direction == "left")){
 			getDirections().remove("down");
 			getDirections().remove("up");
 		}
