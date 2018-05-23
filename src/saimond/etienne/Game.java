@@ -101,7 +101,7 @@ public class Game {
 					}
 				}
 			}
-			// If Medium or Hard AI is chosen
+			// If Medium AI is chosen
 			else if (((BoardAI) getActiveBoard()).getDiff() == 2) {
 				while (getActiveBoard().getShots().indexOf(cell) >= 0) {
 					cell = getActiveBoard().askForRandomPosition();
